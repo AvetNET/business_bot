@@ -1,8 +1,10 @@
+import string
+
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from decouple import config
-import os
+import os, json
 
 bot = Bot(token=config('TOKEN'))
 dp = Dispatcher(bot)
@@ -42,14 +44,20 @@ async def pizza_open_command(message: types.Message):
 
 @dp.message_handler()
 async def echo_send(message: types.Message):
-    if message.text == 'Привет':
-        await message.answer('И тебе привет')
-    else:
-        await message.answer('Иди на х...')
+    if {i.lower().translate(str.maketrans('', '', string.punctuation)) for i in message.text.split(' ')}.intersection(set(json.load(open('cenz.json')))) != set():
+        await message.reply('Маты запрещены')
+        await message.delete()
 
-    # await message.answer(message.text)
-    # await message.reply(message.text)
-    # await bot.send_message(message.from_user.id, message.text)
+
+
+    # if message.text == 'Привет':
+    #     await message.answer('И тебе привет')
+    # else:
+    #     await message.answer('Иди на х...')
+    #
+    # # await message.answer(message.text)
+    # # await message.reply(message.text)
+    # # await bot.send_message(message.from_user.id, message.text)
 
 
 executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
